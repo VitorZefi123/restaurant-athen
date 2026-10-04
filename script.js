@@ -440,10 +440,9 @@ $("#reserveForm").addEventListener("submit", (e) => {
 });
 
 // ---------- Email notification to the restaurant ----------
-// Sent through FormSubmit (formsubmit.co) because GitHub Pages can't send email itself.
-// The first order triggers an "Activate Form" email to this address: click it once.
-const NOTIFY_EMAIL = "vitorzefi215@gmail.com";
-const NOTIFY_URL = `https://formsubmit.co/ajax/${NOTIFY_EMAIL}`;
+// Sent through Formspree because GitHub Pages can't send email itself.
+// The receiving address is configured in the Formspree dashboard for this form.
+const NOTIFY_URL = "https://formspree.io/f/xwlveyab";
 
 function orderLines() {
   return [...cart]
@@ -458,8 +457,8 @@ function buildEmail(code, name, phone) {
   const { sub, service, fee, total } = totals();
   const email = $("#email").value.trim();
   const notes = $("#notes").value.trim();
-  const base = { _template: "table", _captcha: "false", Code: code, Name: name, Phone: phone };
-  if (email) base.email = email; // FormSubmit uses this as the reply-to address
+  const base = { Code: code, Name: name, Phone: phone };
+  if (email) base.email = email; // Formspree uses this as the reply-to address
 
   if (mode === "delivery") {
     const floor = $("#floor").value.trim();
@@ -506,7 +505,9 @@ async function placeOrder(name, phone) {
       body: JSON.stringify(buildEmail(code, name, phone)),
     });
     const data = await res.json().catch(() => ({}));
-    if (!res.ok || String(data.success) !== "true") throw new Error(data.message || `HTTP ${res.status}`);
+    if (!res.ok || data.ok === false) {
+      throw new Error((data.errors || []).map((x) => x.message).join("; ") || data.error || `HTTP ${res.status}`);
+    }
     showConfirmation(name, code);
   } catch (e) {
     console.error("Order email failed:", e);
