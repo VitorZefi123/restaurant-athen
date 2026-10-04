@@ -436,21 +436,99 @@ $("#reserveForm").addEventListener("submit", (e) => {
       return;
     }
   }
-  showConfirmation(name);
+  placeOrder(name, phone);
 });
 
+// ---------- Email notification to the restaurant ----------
+// Sent through FormSubmit (formsubmit.co) because GitHub Pages can't send email itself.
+// The first order triggers an "Activate Form" email to this address: click it once.
+const NOTIFY_EMAIL = "vitorzefi215@gmail.com";
+const NOTIFY_URL = `https://formsubmit.co/ajax/${NOTIFY_EMAIL}`;
+
+function orderLines() {
+  return [...cart]
+    .map(([id, q]) => {
+      const d = MENU.find((m) => m.id === id);
+      return `${q} × ${d.name} — ${money(d.price * q)}`;
+    })
+    .join("\n");
+}
+
+function buildEmail(code, name, phone) {
+  const { sub, service, fee, total } = totals();
+  const email = $("#email").value.trim();
+  const notes = $("#notes").value.trim();
+  const base = { _template: "table", _captcha: "false", Code: code, Name: name, Phone: phone };
+  if (email) base.email = email; // FormSubmit uses this as the reply-to address
+
+  if (mode === "delivery") {
+    const floor = $("#floor").value.trim();
+    return {
+      ...base,
+      _subject: `🛵 New delivery order ${code} — ${money(total)}`,
+      Type: "Delivery",
+      Address: `${$("#street").value.trim()}${floor ? ", " + floor : ""}, ${$("#zip").value.trim()} ${$("#city").value.trim()}`,
+      "Delivery time": deliveryTime === "ASAP" ? "As soon as possible" : deliveryTime,
+      Payment: payment,
+      Order: orderLines(),
+      Subtotal: money(sub),
+      "Delivery fee": fee ? money(fee) : "Free",
+      Total: money(total),
+      Notes: notes || "—",
+    };
+  }
+  return {
+    ...base,
+    _subject: `🍽️ New table reservation ${code} — ${dateInput.value} ${selectedTime}, ${guests} guests`,
+    Type: "Table reservation",
+    Date: dateInput.value,
+    Time: selectedTime,
+    Guests: String(guests),
+    "Pre-order": cart.size ? orderLines() : "None (order at the table)",
+    ...(cart.size ? { Subtotal: money(sub), "Service (10%)": money(service), Total: money(total) } : {}),
+    Notes: notes || "—",
+  };
+}
+
+async function placeOrder(name, phone) {
+  const btn = $("#reserveForm button[type=submit]");
+  const label = $("#submitText").textContent;
+  const err = $("#formError");
+  const code = "RA-" + Math.random().toString(36).slice(2, 7).toUpperCase();
+
+  btn.disabled = true;
+  btn.classList.add("loading");
+  $("#submitText").textContent = "Sending…";
+  try {
+    const res = await fetch(NOTIFY_URL, {
+      method: "POST",
+      headers: { "Content-Type": "application/json", Accept: "application/json" },
+      body: JSON.stringify(buildEmail(code, name, phone)),
+    });
+    const data = await res.json().catch(() => ({}));
+    if (!res.ok || String(data.success) !== "true") throw new Error(data.message || `HTTP ${res.status}`);
+    showConfirmation(name, code);
+  } catch (e) {
+    console.error("Order email failed:", e);
+    err.textContent = "Sorry, we couldn't send your order right now. Please try again, or call us.";
+  } finally {
+    btn.disabled = false;
+    btn.classList.remove("loading");
+    $("#submitText").textContent = label;
+  }
+}
+
 // ---------- Confirmation ----------
-function showConfirmation(name) {
+function showConfirmation(name, code) {
   const delivery = mode === "delivery";
   $("#road").hidden = !delivery;
   $("#modal").querySelector(".check").style.display = delivery ? "none" : "";
   $("#modalTitle").textContent = delivery ? "Order on its way!" : "Table reserved!";
-  if (delivery) return showDeliveryConfirmation(name);
+  if (delivery) return showDeliveryConfirmation(name, code);
 
   const dateStr = new Date(dateInput.value + "T00:00").toLocaleDateString(undefined, {
     weekday: "long", month: "long", day: "numeric",
   });
-  const code = "RA-" + Math.random().toString(36).slice(2, 7).toUpperCase();
   const { total } = totals();
 
   $("#modalText").textContent = `See you soon, ${name.split(" ")[0]}! We've saved your table.`;
@@ -474,8 +552,7 @@ function showConfirmation(name) {
   confetti();
 }
 
-function showDeliveryConfirmation(name) {
-  const code = "RA-" + Math.random().toString(36).slice(2, 7).toUpperCase();
+function showDeliveryConfirmation(name, code) {
   const { sub, fee, total } = totals();
   const street = $("#street").value.trim();
   const floor = $("#floor").value.trim();
