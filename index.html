@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Restaurant Athen · Oberer Gasthof Weinböhla</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;0,800;1,600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <!-- Animated background blobs -->
+  <div class="bg-blobs" aria-hidden="true">
+    <span class="blob b1"></span>
+    <span class="blob b2"></span>
+    <span class="blob b3"></span>
+  </div>
+
+  <!-- Navbar -->
+  <header class="nav" id="nav">
+    <a href="#home" class="logo"><span class="logo-main">Restaurant <em>Athen</em></span><span class="logo-sub">Oberer Gasthof Weinböhla</span></a>
+    <nav class="nav-links">
+      <a href="#menu">Menu</a>
+      <a href="#reserve" data-mode="table">Reserve</a>
+      <a href="#reserve" data-mode="delivery">Delivery</a>
+    </nav>
+    <button class="cart-btn" id="cartBtn" aria-label="Open your order">
+      <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
+      <span class="cart-count" id="cartCount">0</span>
+    </button>
+  </header>
+
+  <!-- Hero -->
+  <section class="hero" id="home">
+    <div class="hero-text">
+      <p class="eyebrow reveal">Greek Cuisine · Weinböhla</p>
+      <h1 class="reveal">
+        <span class="line">Taste the</span>
+        <span class="line accent">Aegean.</span>
+      </h1>
+      <p class="lead reveal">Pick your dishes, then book a table or get them delivered hot to your door in Weinböhla.</p>
+      <div class="hero-cta reveal">
+        <a href="#menu" class="btn btn-primary">Explore Menu</a>
+        <a href="#reserve" class="btn btn-ghost" data-mode="table">Book a Table</a>
+        <a href="#reserve" class="btn btn-ghost" data-mode="delivery">🛵 Order Delivery</a>
+      </div>
+      <div class="stats reveal">
+        <div><strong data-count="4.9">0</strong><span>Rating</span></div>
+        <div><strong data-count="23">0</strong><span>Dishes</span></div>
+        <div><strong data-count="12">0</strong><span>Years of craft</span></div>
+      </div>
+    </div>
+    <div class="hero-visual reveal">
+      <div class="plate">
+        <div class="plate-inner">🥙</div>
+        <span class="orbit o1">🫒</span>
+        <span class="orbit o2">🍅</span>
+        <span class="orbit o3">🍋</span>
+        <span class="orbit o4">🌿</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- Menu -->
+  <section class="menu" id="menu">
+    <div class="section-head reveal">
+      <p class="eyebrow">Our Menu</p>
+      <h2>Choose what you'd like to eat</h2>
+      <p class="muted">Tap <b>Add</b> on any dish and it goes straight into your order.</p>
+    </div>
+
+    <div class="filters reveal" id="filters">
+      <button class="chip active" data-cat="all">All</button>
+      <button class="chip" data-cat="starters">Starters</button>
+      <button class="chip" data-cat="mains">Mains</button>
+      <button class="chip" data-cat="desserts">Desserts</button>
+      <button class="chip" data-cat="drinks">Drinks</button>
+      <button class="chip" data-cat="soft">Soft Drinks</button>
+      <span class="chip-indicator" id="chipIndicator"></span>
+    </div>
+
+    <div class="grid" id="menuGrid"></div>
+  </section>
+
+  <!-- Checkout: reserve a table or delivery -->
+  <section class="reserve" id="reserve">
+    <div class="section-head reveal">
+      <p class="eyebrow">Reserve or Delivery</p>
+      <h2 id="checkoutTitle">Book your table</h2>
+      <p class="muted" id="checkoutSub">Choose how you'd like to enjoy your meal.</p>
+    </div>
+
+    <div class="mode-switch reveal" id="modeSwitch" role="tablist">
+      <button type="button" class="mode active" data-mode="table" role="tab" aria-selected="true">
+        <span class="mode-ico">🍽️</span>
+        <span class="mode-text"><b>Reserve a Table</b><small>Dine in with us</small></span>
+      </button>
+      <button type="button" class="mode" data-mode="delivery" role="tab" aria-selected="false">
+        <span class="mode-ico">🛵</span>
+        <span class="mode-text"><b>Delivery</b><small>To your door · 30–45 min</small></span>
+      </button>
+      <span class="mode-indicator" id="modeIndicator"></span>
+    </div>
+
+    <div class="reserve-wrap">
+      <form class="card form reveal" id="reserveForm" novalidate>
+        <div class="field">
+          <input type="text" id="name" required placeholder=" " />
+          <label for="name">Full name</label>
+        </div>
+        <div class="row">
+          <div class="field">
+            <input type="tel" id="phone" required placeholder=" " />
+            <label for="phone">Phone number</label>
+          </div>
+          <div class="field">
+            <input type="email" id="email" placeholder=" " />
+            <label for="email">Email (optional)</label>
+          </div>
+        </div>
+
+        <!-- Table panel -->
+        <div class="mode-panel" data-panel="table">
+          <div class="row">
+            <div class="field">
+              <input type="date" id="date" required />
+              <label for="date" class="fixed">Date</label>
+            </div>
+            <div class="field guests">
+              <span class="fixed-label">Guests</span>
+              <div class="stepper">
+                <button type="button" id="gMinus" aria-label="Fewer guests">−</button>
+                <span id="guests">2</span>
+                <button type="button" id="gPlus" aria-label="More guests">+</button>
+              </div>
+            </div>
+          </div>
+          <span class="fixed-label">Time</span>
+          <div class="times" id="times"></div>
+        </div>
+
+        <!-- Delivery panel -->
+        <div class="mode-panel" data-panel="delivery" hidden>
+          <div class="row row-wide">
+            <div class="field">
+              <input type="text" id="street" placeholder=" " autocomplete="street-address" />
+              <label for="street">Street & house number</label>
+            </div>
+            <div class="field">
+              <input type="text" id="floor" placeholder=" " />
+              <label for="floor">Floor / doorbell</label>
+            </div>
+          </div>
+          <div class="row row-zip">
+            <div class="field">
+              <input type="text" id="zip" placeholder=" " inputmode="numeric" maxlength="5" value="01689" />
+              <label for="zip">Postal code</label>
+            </div>
+            <div class="field">
+              <input type="text" id="city" placeholder=" " value="Weinböhla" />
+              <label for="city">City</label>
+            </div>
+          </div>
+
+          <span class="fixed-label">Delivery time</span>
+          <div class="times" id="dTimes"></div>
+
+          <span class="fixed-label">Payment</span>
+          <div class="pay" id="pay">
+            <button type="button" class="pay-opt active" data-pay="Cash">💶<span>Cash</span></button>
+            <button type="button" class="pay-opt" data-pay="Card on delivery">💳<span>Card</span></button>
+            <button type="button" class="pay-opt" data-pay="PayPal">📱<span>PayPal</span></button>
+          </div>
+        </div>
+
+        <div class="field">
+          <textarea id="notes" rows="2" placeholder=" "></textarea>
+          <label for="notes" id="notesLabel">Special requests (allergies, birthday…)</label>
+        </div>
+
+        <p class="error" id="formError"></p>
+        <button type="submit" class="btn btn-primary full">
+          <span id="submitText">Confirm Reservation</span>
+        </button>
+      </form>
+
+      <aside class="card summary reveal">
+        <h3>Your order</h3>
+        <ul class="summary-list" id="summaryList"></ul>
+        <div class="summary-empty" id="summaryEmpty">
+          <div class="empty-icon">🍽️</div>
+          <p id="emptyText">No dishes yet.<br /><a href="#menu">Browse the menu</a> to pre-order.</p>
+        </div>
+
+        <div class="free-bar" id="freeBar" hidden>
+          <p id="freeText"></p>
+          <div class="bar"><span id="freeFill"></span></div>
+        </div>
+
+        <div class="totals">
+          <div><span>Subtotal</span><span id="subtotal">$0.00</span></div>
+          <div id="serviceRow"><span>Service (10%)</span><span id="service">$0.00</span></div>
+          <div id="feeRow" hidden><span>Delivery fee</span><span id="fee">$0.00</span></div>
+          <div class="grand"><span>Total</span><span id="total">$0.00</span></div>
+        </div>
+      </aside>
+    </div>
+  </section>
+
+  <footer class="footer">
+    <p>© 2026 Restaurant Athen · Oberer Gasthof · Weinböhla · Open daily 12:00 – 23:00</p>
+  </footer>
+
+  <!-- Cart drawer -->
+  <div class="overlay" id="overlay"></div>
+  <aside class="drawer" id="drawer" aria-label="Your order">
+    <div class="drawer-head">
+      <h3>Your order</h3>
+      <button class="icon-btn" id="closeDrawer" aria-label="Close">✕</button>
+    </div>
+    <ul class="drawer-list" id="drawerList"></ul>
+    <div class="summary-empty" id="drawerEmpty">
+      <div class="empty-icon">🛒</div>
+      <p>Your order is empty.</p>
+    </div>
+    <div class="drawer-foot">
+      <div class="grand"><span>Total</span><span id="drawerTotal">$0.00</span></div>
+      <a href="#reserve" class="btn btn-primary full" id="drawerReserve">Continue to Checkout</a>
+    </div>
+  </aside>
+
+  <!-- Success modal -->
+  <div class="modal" id="modal">
+    <div class="modal-card">
+      <svg class="check" viewBox="0 0 52 52">
+        <circle cx="26" cy="26" r="24" fill="none" />
+        <path fill="none" d="M14 27l8 8 16-16" />
+      </svg>
+      <div class="road" id="road" hidden><span class="scooter">🛵</span></div>
+      <h3 id="modalTitle">Table reserved!</h3>
+      <p id="modalText"></p>
+      <div class="ticket" id="ticket"></div>
+      <button class="btn btn-primary" id="modalClose">Done</button>
+    </div>
+  </div>
+
+  <div class="toast" id="toast"></div>
+  <div id="confetti"></div>
+
+  <script src="script.js"></script>
+</body>
+</html>
