@@ -148,6 +148,35 @@ button { font: inherit; cursor: pointer; border: none; background: none; color: 
   border: 2px dashed rgba(226, 187, 90, 0.4); animation: spin 30s linear infinite;
 }
 .plate-inner { font-size: clamp(6rem, 18vw, 9rem); animation: bob 4s ease-in-out infinite; filter: drop-shadow(0 20px 30px rgba(0,0,0,0.6)); }
+/* Menu card with a real photo */
+.dish-photo { background: #0b1f45; }
+.dish-photo img {
+  width: 100%; height: 100%; object-fit: cover; object-position: 50% 45%;
+  transform: scale(1.05); transition: transform 0.8s var(--ease);
+}
+.dish:hover .dish-photo img { transform: scale(1.15); }
+.dish-photo::after {
+  content: ""; position: absolute; inset: 0; pointer-events: none;
+  background: linear-gradient(to top, rgba(6,20,48,0.45), transparent 45%);
+}
+
+/* Real dish photo, cropped to the round plate */
+.plate-photo {
+  position: absolute; inset: 0; width: 100%; height: 100%; border-radius: 50%;
+  object-fit: cover; object-position: center;
+  transform: scale(1.02); animation: plateIn 1.4s var(--ease) both, breathe 8s ease-in-out 1.4s infinite;
+  box-shadow: 0 0 0 6px rgba(255,255,255,0.08);
+}
+@keyframes plateIn { from { opacity: 0; transform: scale(0.85) rotate(-12deg); } }
+@keyframes breathe { 50% { transform: scale(1.06) rotate(2deg); } }
+.plate-badge {
+  position: absolute; bottom: 8%; left: 50%; transform: translateX(-50%); z-index: 2;
+  padding: 6px 16px; border-radius: 999px; white-space: nowrap;
+  background: rgba(6, 20, 48, 0.75); backdrop-filter: blur(8px);
+  border: 1px solid rgba(226, 187, 90, 0.5); color: var(--gold);
+  font-size: 0.78rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase;
+}
+.orbit { z-index: 3; }
 @keyframes bob { 50% { transform: translateY(-14px) rotate(4deg); } }
 @keyframes spin { to { transform: rotate(360deg); } }
 .orbit {
@@ -505,3 +534,5 @@ section { scroll-margin-top: 90px; }
 .cart-btn { background: var(--grad); }
 .price { color: var(--gold); }
 .logo-main { color: #fff; }
+.line-item .li-emoji { overflow: hidden; }
+.line-item .li-emoji img { width: 100%; height: 100%; object-fit: cover; transform: scale(1.3); }

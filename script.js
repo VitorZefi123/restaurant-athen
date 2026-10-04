@@ -5,6 +5,7 @@ const MENU = [
   { id: 3, cat: "starters", name: "Roasted Pumpkin Soup", desc: "Velvety pumpkin, toasted seeds, coconut cream swirl.", price: 8.5, emoji: "🎃", tag: "Vegan", tint: "#3e2a14,#6b4318" },
   { id: 4, cat: "starters", name: "Garden Avocado Toast", desc: "Smashed avocado, chili flakes, pickled onion, micro herbs.", price: 9.5, emoji: "🥑", tint: "#1f2e1d,#35502e" },
 
+  { id: 24, cat: "mains", name: "Moussaka", desc: "Classic Greek moussaka: layers of aubergine, potato and spiced minced meat, oven-baked and topped with tomato sauce, grated cheese and feta. Served with a side salad.", price: 16.9, emoji: "🍲", img: "images/moussaka-round.jpg", tag: "House Special", tint: "#3a1f14,#5e3220" },
   { id: 5, cat: "mains", name: "Wood-Fired Ribeye", desc: "300g dry-aged ribeye, chimichurri, rosemary fries.", price: 34, emoji: "🥩", tag: "Signature", tint: "#3a1a1a,#5e2626" },
   { id: 6, cat: "mains", name: "Truffle Tagliatelle", desc: "Fresh egg pasta, black truffle butter, parmesan snow.", price: 22, emoji: "🍝", tint: "#3a301c,#5c4a22" },
   { id: 7, cat: "mains", name: "Miso Glazed Salmon", desc: "Atlantic salmon, sesame greens, jasmine rice.", price: 26, emoji: "🐟", tint: "#1c2a36,#27435a" },
@@ -55,10 +56,11 @@ function renderMenu() {
       const [c1, c2] = d.tint.split(",");
       return `
       <article class="dish ${cart.has(d.id) ? "selected" : ""}" data-id="${d.id}" style="animation-delay:${i * 60}ms">
+        ${d.img ? `<div class="dish-emoji dish-photo"><img src="${d.img}" alt="${d.name}" loading="lazy" /></div>` : `
         <div class="dish-emoji ${d.cat === "soft" ? "soft" : ""}" style="--tint:linear-gradient(135deg,${c1},${c2})">
           ${d.fizz ? bubblesHTML() : ""}${d.cat === "soft" && !d.fizz ? '<span class="ripple"></span>' : ""}
           <span class="glyph">${d.emoji}</span>
-        </div>
+        </div>`}
         ${d.tag ? `<span class="tag">${d.tag}</span>` : ""}
         <h3>${d.name}</h3>
         <p>${d.desc}</p>
@@ -126,7 +128,7 @@ function lineItemsHTML() {
       const d = MENU.find((m) => m.id === id);
       return `
       <li class="line-item">
-        <div class="li-emoji">${d.emoji}</div>
+        <div class="li-emoji">${d.img ? `<img src="${d.img}" alt="" />` : d.emoji}</div>
         <div class="li-info">
           <div class="li-name">${d.name}</div>
           <div class="li-sub">${q} × ${money(d.price)}</div>
